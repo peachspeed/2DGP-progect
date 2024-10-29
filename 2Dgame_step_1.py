@@ -1,58 +1,58 @@
 from pico2d import *
 import random
 
-#캐릭터 주인공 쿠
+# 캐릭터 주인공 쿠
 class Ku:
     def __init__(self):
-        self.x, self.y = 400, 150  # 캐릭터 위치
-        self.frame = 0  # 현재 프레임
-        self.dir = 0  # 방향 (0 = 가만히, 1 = 오른쪽)
-        self.action = 0  # 캐릭터의 동작 상태 (0 = 가만히, 1 = 걷기)
-        self.image = load_image('pixilart-sprite.png')  # 스프라이트 이미지 로드
+        self.x, self.y = 50, 120  #500x500 화면 기준 오른쪽 밑
+        self.frame = 0
+        self.dir = 0
+        self.action = 0
+        self.act = 0 # 캐릭터의 동작 상태 (0 = 가만히, 1 = 걷기)
+        self.walk_image = load_image('pixilart-sprite.png')
+        self.stop_image = load_image('stop.png')
 
     def update(self):
-        # 가만히 있을 때도 프레임은 계속 업데이트됨
-        self.frame = (self.frame + 1) % 4  # 프레임은 4개로 설정 (0, 1, 2, 3)
-
-        # 방향에 따라 캐릭터의 위치를 업데이트
-        if self.dir != 0:  # 오른쪽으로 이동할 때
-            self.x += self.dir * 5  # x 좌표를 5만큼 이동 (속도 조정 가능)
+        # 프레임을 계속 업데이트
+        self.frame = (self.frame + 1) % 4 
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:
             if event.key == SDLK_RIGHT:
-                print("오른쪽 키 눌림")
                 self.dir = 1  # 오른쪽 이동 시작
-                self.action = 0
+                self.act = 1  # 걷기 동작
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
-                print("오른쪽 키에서 손 뗌")
                 self.dir = 0  # 이동 멈춤
-                self.action = 0  # 가만히 있는 동작 (action = 0)
+                self.act = 0  # 가만히 있는 동작
 
     def draw(self):
-        # 스프라이트 이미지에서 self.frame과 self.action에 맞는 프레임을 자르고 그립니다.
-        self.image.clip_draw(self.frame * 100, 100 * self.action, 100, 100, self.x, self.y, 250, 250)
+        if self.act == 0:
+            self.stop_image.draw(self.x, self.y, 150, 150)
+        else:
+
+            self.walk_image.clip_draw(self.frame * 100, 100 * self.action, 100, 100, self.x, self.y, 150, 150)
 
 
-def menu():
-    pass
+# 배경 클래스
+class Background:
+    def __init__(self):
+        self.x = 0
+        self.image = load_image('back_L.png')
 
-def rhythm_game():
-    pass
+    def update(self, dir):
+        # 캐릭터가 움직일 때 배경을 반대 방향
+        self.x -= dir * 5
+        # 화면 넘어가면 다시 초기화 (배경 반복)
+        if self.x <= -500:
+            self.x += 500
 
-def RPG_confrontation():
-    pass
+    def draw(self):
+        # 배경 이미지를 화면에 꽉 채워 표시하고 연속적으로 연결
+        self.image.draw(self.x + 250, 250)  # 첫 번째 배경
+        self.image.draw(self.x + 750, 250)  # 이어지는 두 번째 배경
 
-def costume():
-    pass
-
-def makeup():
-    pass
-
-def random_ability():
-    pass
 
 def handle_events():
     global running
@@ -68,24 +68,24 @@ def handle_events():
 
 
 def update_world():
-    for o in world:
-        o.update()
-    pass
+    ku.update()
+    background.update(ku.dir)  # 배경의 위치를 업데이트하여 캐릭터가 움직이는 효과 생성
 
 
 def reset_world():
     global running
-    global grass
-    global team
     global world
     global ku
+    global background
 
     running = True
     world = []
 
-
     ku = Ku()
+    background = Background()
+    world.append(background)
     world.append(ku)
+
 
 def render_world():
     clear_canvas()
@@ -93,13 +93,16 @@ def render_world():
         o.draw()
     update_canvas()
 
-open_canvas()
+
+open_canvas(500, 500)
 reset_world()
-# game loop
+
+# 게임 루프
 while running:
     handle_events()
     update_world()
     render_world()
-    delay(0.25)
-# finalization code
+    delay(0.15)
+
+# 종료 코드
 close_canvas()

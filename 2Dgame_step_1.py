@@ -14,7 +14,7 @@ class Ku:
 
     def update(self):
         # 프레임을 계속 업데이트
-        self.frame = (self.frame + 1) % 4 
+        self.frame = (self.frame + 1) % 4
 
     def handle_event(self, event):
         if event.type == SDL_KEYDOWN:

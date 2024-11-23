@@ -1,6 +1,5 @@
 from pico2d import *
 
-# 옷/머리 액세서리 클래스
 class DragItem:
     def __init__(self, x, y, image_path, item_type):
         self.x = x
@@ -16,19 +15,38 @@ class DragItem:
     def draw(self):
         if self.visible:  # 아이템이 보이는 경우만 그리기
             self.image.draw(self.x, self.y, self.resized_width, self.resized_height)
+            # 클릭 가능한 영역에 빨간색 사각형 표시
+            x1, y1, x2, y2 = self.get_bounding_box()
+            draw_rectangle(x1, y1, x2, y2)
 
     def is_inside(self, x, y):
-        # 아이템 유형에 따라 클릭 가능한 영역을 다르게 설정 (범위 약간 확대)
+        """클릭 가능한 영역 확인"""
+        x1, y1, x2, y2 = self.get_bounding_box()
+        return x1 <= x <= x2 and y1 <= y <= y2
+
+    def get_bounding_box(self):
+        """클릭 가능한 영역 반환"""
         if self.item_type == 'hair':  # 헤어: 윗부분만 클릭 가능
-            return self.x - self.resized_width // 2 < x < self.x + self.resized_width // 2 and \
-                   self.y + self.resized_height // 5 < y < self.y + self.resized_height // 2
+            x1 = self.x - self.resized_width // 5#변경
+            y1 = self.y + self.resized_height // 5
+            x2 = self.x + self.resized_width // 5#변경
+            y2 = self.y + self.resized_height // 2
         elif self.item_type == 'top':  # 상의: 가운데 부분만 클릭 가능
-            return self.x - self.resized_width // 2 < x < self.x + self.resized_width // 2 and \
-                   self.y - self.resized_height // 5 < y < self.y + self.resized_height // 5
+            x1 = self.x - self.resized_width // 7#변경
+            y1 = self.y + self.resized_height //20#변경
+            x2 = self.x + self.resized_width // 8#변경
+            y2 = self.y + self.resized_height //3#변경
         elif self.item_type == 'bottom':  # 하의: 아랫부분만 클릭 가능
-            return self.x - self.resized_width // 2 < x < self.x + self.resized_width // 2 and \
-                   self.y - self.resized_height // 2 < y < self.y - self.resized_height // 5
-        return False
+            x1 = self.x - self.resized_width // 5#변경
+            y1 = self.y - self.resized_height // 2
+            x2 = self.x + self.resized_width // 5#변경
+            y2 = self.y + self.resized_height // 5
+        else:
+            x1 = self.x - self.resized_width // 2
+            y1 = self.y - self.resized_height // 2
+            x2 = self.x + self.resized_width // 2
+            y2 = self.y + self.resized_height // 2
+        return x1, y1, x2, y2
 
     def set_position(self, x, y):
         self.x, self.y = x, y
@@ -41,8 +59,9 @@ class Ku:
         self.image = load_image('ku.png')
         self.width = 1688
         self.height = 2388
-        self.resized_width = 300
-        self.resized_height = int(self.height * (self.resized_width / self.width))
+        self.scale_factor = 1.9  # 크기 조정 비율 (2배 확대)
+        self.resized_width = int(300 * self.scale_factor)  # 너비를 2배로 조정
+        self.resized_height = int(self.height * (self.resized_width / self.width))  # 높이도 비율에 맞게 조정
         self.worn_items = []  # 착용 중인 아이템 리스트
 
     def draw(self):
@@ -142,6 +161,17 @@ def reset_world():
         DragItem(900, 300, 'hair6.png', 'hair'),
         DragItem(700, 200, 'hair7.png', 'hair'),
     ]
+
+    # 위치 정렬: 각 아이템의 클릭 범위가 겹치지 않도록 배치
+    x_start = 700
+    y_start = 600
+    x_spacing = 150  # x축 간격
+    y_spacing = 120  # y축 간격
+
+    for i, item in enumerate(items):
+        item.x = x_start + (i % 3) * x_spacing  # 한 줄에 3개씩 배치
+        item.y = y_start - (i // 3) * y_spacing  # 줄마다 y축 간격
+
 
 
 def render_world():

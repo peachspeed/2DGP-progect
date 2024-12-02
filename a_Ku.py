@@ -9,7 +9,7 @@ class Ku:
         self.act = 0  # 캐릭터의 동작 상태 (0 = 가만히, 1 = 걷기)
         self.walk_image = load_image('pixilart-sprite.png')
         self.stop_image = load_image('stop.png')
-        self.state_machine = StateMachine(self)
+        self.a_state_machine = StateMachine(self)
         self.state_machine.start(Idle)
 
     def update(self):

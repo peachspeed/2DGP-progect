@@ -54,7 +54,7 @@ def main():
     button_x, button_y = WIDTH // 2, 50  # 버튼 위치 아래로 100 이동
 
     click_count = 0  # 클릭 횟수
-    max_clicks = 5   # 최대 클릭 횟수
+    max_clicks = 6   # 최대 클릭 횟수
 
     running = True
     while running:

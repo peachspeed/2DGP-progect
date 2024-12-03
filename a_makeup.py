@@ -45,12 +45,11 @@ def enter():
     for i, color in enumerate(colors):
         button_x = SCREEN_WIDTH - 100  # 버튼은 오른쪽 끝에 위치
         button_y = SCREEN_HEIGHT + 70 - (i + 1) * 150  # 버튼 간격 유지 + 50 위로 이동
-        button = Button(button_x, button_y, f'{color}.png', f'makeup_{color}.png', scale=0.5)  # scale=0.4 적용
+        button = Button(button_x, button_y, f'{color}.png', f'makeup_{color}.png', scale=0.5)
         buttons.append(button)
 
 def update():
-    pass  # 이 게임에서는 특별한 갱신 로직이 필요하지 않음
-
+    pass
 def draw():
     global current_makeup
     clear_canvas()

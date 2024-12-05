@@ -1,5 +1,5 @@
 import a_game_framework
-from pico2d import load_image, delay, clear_canvas, update_canvas, get_events, get_time
+from pico2d import*
 import a_title_mode
 
 def init():
@@ -7,6 +7,8 @@ def init():
     global running
     global logo_start_time
 
+
+    open_canvas(1800, 900)
     image = load_image('roding1.png')
     running = True
     logo_start_time = get_time()
@@ -15,15 +17,17 @@ def finish():
     global image
     del image
 
+
 def update():
     global logo_start_time
     if get_time() - logo_start_time >= 2.0:
-        logo_start_time = get_time()
-        a_game_framework.change_mode(a_title_mode)
+        a_game_framework.change_mode(a_title_mode)  # 타이틀 모드로 전환
+
 
 def draw():
     clear_canvas()
-    image.draw(300, 400)
+    image.draw(900, 450)  # 캔버스 중심(900, 450)에 배경 이미지를 배치
     update_canvas()
+
 def handle_events():
     events = get_events()

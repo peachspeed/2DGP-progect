@@ -1,9 +1,12 @@
 import a_game_framework
-import a_logo_mode as start_mode
-import pico2d
+import a_logo_mode
+from pico2d import*
 
+# 캔버스 열기
+open_canvas(1800, 900)
 
+# 게임 실행
+a_game_framework.run(a_logo_mode)
 
-pico2d.open_canvas()
-a_game_framework.run(start_mode)
-pico2d.close_canvas()
+# 캔버스 닫기
+close_canvas()
